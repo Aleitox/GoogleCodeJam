@@ -10,6 +10,10 @@ namespace GoogleCodeJam.ReverseWords
     public class Problem : Base.Problem
     {
         [InterpreterAttribute(Order = 1)]
+        public static int Merigoldo { get; set; }
+
+
+        [InterpreterAttribute(Order = 1)]
         public string Sentence { get; set; }
 
         public override string PrintSolution()
