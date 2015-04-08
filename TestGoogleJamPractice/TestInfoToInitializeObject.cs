@@ -1,4 +1,5 @@
 ﻿using System;
+using GoogleCodeJam.Base;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GoogleCodeJam.Interpreter;
 using GoogleCodeJamPractice;

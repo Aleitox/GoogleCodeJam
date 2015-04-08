@@ -12,32 +12,44 @@ namespace GoogleCodeJam.Interpreter
     {
         public List<InfoToInitializeProperty> Info { get; set; }
 
+        public List<InfoToInitializeProperty> InfoForStatic { get; set; }
+
         public ObjectInitializer(object objectToCreateMap) 
         {
             Info = new List<InfoToInitializeProperty>();
 
-            PropertyInfo[] propertyInfos = objectToCreateMap.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var propertyInfos = objectToCreateMap.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            Info = GetInfoFor(propertyInfos);
 
+            propertyInfos = objectToCreateMap.GetType().GetProperties(BindingFlags.Public | BindingFlags.Static);
+            InfoForStatic = GetInfoFor(propertyInfos);
+
+        }
+
+        public List<InfoToInitializeProperty> GetInfoFor(PropertyInfo[] propertyInfos)
+        {
+            var info = new List<InfoToInitializeProperty>();
             foreach (var propertyInfo in propertyInfos)
             {
                 object[] attributes = propertyInfo.GetCustomAttributes(true);
                 foreach (object attribute in attributes)
                 {
-                    InterpreterAttribute interpreterAttribute = attribute as InterpreterAttribute;
+                    var interpreterAttribute = attribute as InterpreterAttribute;
                     if (interpreterAttribute != null)
                     {
-                        var mapperProperty = new InfoToInitializeProperty();
-                        mapperProperty.PropertyName = propertyInfo.Name;
-                        mapperProperty.Order = interpreterAttribute.Order;
-                        mapperProperty.ItitializeAttibutes = GetItitializeAttibutes(interpreterAttribute.ItitializeAttibutes);
-                        mapperProperty.MethodForInitialize = GetMethodInfo(propertyInfo.PropertyType, interpreterAttribute.InitializeMethod);
+                        var mapperProperty = new InfoToInitializeProperty
+                        {
+                            PropertyName = propertyInfo.Name,
+                            Order = interpreterAttribute.Order,
+                            ItitializeAttibutes = GetItitializeAttibutes(interpreterAttribute.ItitializeAttibutes),
+                            MethodForInitialize = GetMethodInfo(propertyInfo.PropertyType, interpreterAttribute.InitializeMethod)
+                        };
 
-                        Info.Add(mapperProperty);
+                        info.Add(mapperProperty);
                     }
                 }
             }
-
-            Info.OrderBy(x => x.Order);
+            return info.OrderBy(x => x.Order).ToList();
         }
 
         public InputProblems<T> InitializeObject<T>(T aProblem, List<List<string>> input) where T : new()
@@ -47,9 +59,16 @@ namespace GoogleCodeJam.Interpreter
             var iterator = new ListListIterator<string>(input);
             problems.Cases = Int32.Parse(iterator.Read());
 
+            var problem = new T();
+            foreach (var infoToInitializeProperty in InfoForStatic)
+            {
+                var parameters = new object[] { problem, infoToInitializeProperty.PropertyName, iterator, infoToInitializeProperty.ItitializeAttibutes };
+                infoToInitializeProperty.MethodForInitialize.Invoke(this, parameters);
+            }
+
             while(!iterator.IsDone())
             {
-                var problem = new T();
+                problem = new T();
                 foreach(var infoToInitializeProperty in Info)
                 {
                     var parameters = new object[] { problem, infoToInitializeProperty.PropertyName, iterator, infoToInitializeProperty.ItitializeAttibutes};
@@ -68,9 +87,9 @@ namespace GoogleCodeJam.Interpreter
             {typeof(List<int>), x => x != string.Empty ? x : "SetListIntProperty"}
         };
 
-        private MethodInfo GetMethodInfo(Type type, string InitializeMethod)
+        private MethodInfo GetMethodInfo(Type type, string initializeMethod)
         {
-            var methodName = MethodsName[type].Invoke(InitializeMethod);
+            var methodName = MethodsName[type].Invoke(initializeMethod);
             var methodInfo = typeof(ObjectInitializer).GetMethod(methodName);
             return methodInfo;
         }
@@ -94,7 +113,7 @@ namespace GoogleCodeJam.Interpreter
 
         public void SetIntProperty(ref object objectToInitialize, string propertyNameToSet, Iterator<string> iterator, List<ItitializeAttibute> initializeAttributes) 
         {
-            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet, BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet);
             if (null != prop && prop.CanWrite)
             {
                 prop.SetValue(objectToInitialize, Int32.Parse(iterator.Read()), null);
@@ -103,7 +122,7 @@ namespace GoogleCodeJam.Interpreter
 
         public void SetStringProperty(ref object objectToInitialize, string propertyNameToSet, Iterator<string> iterator, List<ItitializeAttibute> initializeAttributes)
         {
-            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet, BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet);
             if (null != prop && prop.CanWrite)
             {
                 prop.SetValue(objectToInitialize, string.Join(" ", iterator.ReadLine()), null);
@@ -112,7 +131,7 @@ namespace GoogleCodeJam.Interpreter
 
         public void SetListIntProperty(ref object objectToInitialize, string propertyNameToSet, Iterator<string> iterator, List<ItitializeAttibute> initializeAttributes)
         {
-            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet, BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet);
             if (null != prop && prop.CanWrite)
             {
                 var juan = iterator.ReadLine();

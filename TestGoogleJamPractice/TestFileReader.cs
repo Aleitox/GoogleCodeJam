@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Collections.Generic;
-using System.Reflection;
-using GoogleCodeJamPractice;
+﻿using GoogleCodeJam.Base;
 using GoogleCodeJam.Interpreter;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace TestGoogleJamPractice
 {
@@ -30,7 +30,7 @@ namespace TestGoogleJamPractice
         [TestMethod]
         public void TestMethodGetPropertyInfos()
         {
-            Dictionary<string, int> _dict = new Dictionary<string, int>();
+            var _dict = new Dictionary<string, int>();
 
             PropertyInfo[] props = typeof(Problem).GetProperties();
             foreach (PropertyInfo prop in props)
@@ -38,7 +38,7 @@ namespace TestGoogleJamPractice
                 object[] attrs = prop.GetCustomAttributes(true);
                 foreach (object attr in attrs)
                 {
-                    InterpreterAttribute authAttr = attr as InterpreterAttribute;
+                    var authAttr = attr as InterpreterAttribute;
                     if (authAttr != null)
                     {
                         string propName = prop.Name;
