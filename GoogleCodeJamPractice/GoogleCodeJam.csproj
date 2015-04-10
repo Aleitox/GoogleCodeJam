@@ -49,6 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReverseWords\Problem.cs" />
     <Compile Include="ReverseWords\Solution.cs" />
+    <Compile Include="Rotate\Problem.cs" />
     <Compile Include="StoreCredit\Problem.cs" />
     <Compile Include="StoreCredit\Solution.cs" />
   </ItemGroup>
@@ -63,6 +64,10 @@
     <ProjectReference Include="..\GoogleCodeJam.Interpreter\GoogleCodeJam.Interpreter.csproj">
       <Project>{0d7c5bc7-a296-46a7-8f4c-11e8bb36e49f}</Project>
       <Name>GoogleCodeJam.Interpreter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleCodeJam.Model\GoogleCodeJam.Model.csproj">
+      <Project>{179f0c75-caee-4331-994f-bd654101436e}</Project>
+      <Name>GoogleCodeJam.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

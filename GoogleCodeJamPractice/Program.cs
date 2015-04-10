@@ -9,7 +9,7 @@ namespace GoogleCodeJamPractice
     {
         static void Main(string[] args)
         {
-            var aProblem = ProblemFactory.Get(ProblemEnmu.ReverseWords, SizeEnum.large);
+            var aProblem = ProblemFactory.Get(ProblemEnmu.Rotate, SizeEnum.Small);
 
             var fileManger = new FileManager(aProblem.FileName);
             var input = fileManger.ReadFile();

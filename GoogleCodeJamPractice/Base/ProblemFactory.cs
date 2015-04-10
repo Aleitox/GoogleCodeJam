@@ -13,9 +13,11 @@ namespace GoogleCodeJam.Base
             switch (problemEnmu) 
             {
                 case ProblemEnmu.ReverseWords:
-                    return new ReverseWords.Problem() { FileName = string.Format("ReverseWords\\B-{0}-practice", sizeEnum.ToString()) };
+                    return new ReverseWords.Problem() { FileName = string.Format("ReverseWords\\B-{0}-practice", sizeEnum) };
                 case ProblemEnmu.StoreCredit:
-                    return new StoreCredit.Problem() { FileName = string.Format("StoreCredit\\A-{0}-practice", sizeEnum.ToString()) };
+                    return new StoreCredit.Problem() { FileName = string.Format("StoreCredit\\A-{0}-practice", sizeEnum) };
+                case ProblemEnmu.Rotate:
+                    return new Rotate.Problem() { FileName = string.Format("Rotate\\A-{0}-practice", sizeEnum) };
                 default:
                     throw new NotImplementedException();
             }
@@ -24,13 +26,14 @@ namespace GoogleCodeJam.Base
 
     public enum SizeEnum 
     {
-        large,
-        small
+        Large,
+        Small
     }
 
     public enum ProblemEnmu 
     {
         StoreCredit = 1,
-        ReverseWords = 2
+        ReverseWords = 2,
+        Rotate = 3
     }
 }

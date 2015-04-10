@@ -69,7 +69,7 @@ namespace GoogleCodeJam.Interpreter
         {
             if (_done) return default(T);
             var value = CurrentItem();
-            if (_input[_row].Count - 1 < _offSet)
+            if (_offSet < _input[_row].Count - 1)
                 _offSet++;
             else
             {

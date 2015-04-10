@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
+using GoogleCodeJam.Model;
 
 namespace GoogleCodeJam.Interpreter
 {
@@ -84,7 +85,8 @@ namespace GoogleCodeJam.Interpreter
         {
             {typeof(int), x => x != string.Empty ? x : "SetIntProperty"},
             {typeof(string), x => x != string.Empty ? x : "SetStringProperty"},
-            {typeof(List<int>), x => x != string.Empty ? x : "SetListIntProperty"}
+            {typeof(List<int>), x => x != string.Empty ? x : "SetListIntProperty"},
+            {typeof(Matrix<string>), x => x != string.Empty ? x : "SetMatrixStringProperty"}
         };
 
         private MethodInfo GetMethodInfo(Type type, string initializeMethod)
@@ -134,13 +136,34 @@ namespace GoogleCodeJam.Interpreter
             PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet);
             if (null != prop && prop.CanWrite)
             {
-                var juan = iterator.ReadLine();
-                var pedro = new List<int>();
-                foreach (var item in juan)
+                var items = iterator.ReadLine();
+                var intList = new List<int>();
+                foreach (var item in items)
                 {
-                    pedro.Add(Int32.Parse(item));
+                    intList.Add(Int32.Parse(item));
                 }
-                prop.SetValue(objectToInitialize, pedro, null);
+                prop.SetValue(objectToInitialize, intList, null);
+            }
+        }
+
+        public void SetMatrixStringProperty(ref object objectToInitialize, string propertyNameToSet, Iterator<string> iterator, List<ItitializeAttibute> initializeAttributes)
+        {
+            PropertyInfo prop = objectToInitialize.GetType().GetProperty(propertyNameToSet);
+
+            var rows = (int)objectToInitialize.GetType().GetProperty(initializeAttributes.Single(x => x.ThisPropertyAttribute == PropertyAttribute.Rows).OtherPropertyName).GetValue(objectToInitialize);
+            var columns = (int)objectToInitialize.GetType().GetProperty(initializeAttributes.Single(x => x.ThisPropertyAttribute == PropertyAttribute.Columns).OtherPropertyName).GetValue(objectToInitialize);
+            
+            if (null != prop && prop.CanWrite)
+            {
+                var matrix = new Matrix<string>(rows, columns);
+
+                for (var r = 0; r < rows; r++)
+                {
+                    var line = iterator.ReadLine().First();
+                    for(var c = 0; c < line.Length; c++)
+                        matrix.Set(r, c, line[c].ToString());
+                }
+                prop.SetValue(objectToInitialize, matrix, null);
             }
         }
     }

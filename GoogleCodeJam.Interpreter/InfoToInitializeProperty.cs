@@ -29,5 +29,7 @@ namespace GoogleCodeJam.Interpreter
     {
         Length,
         Lines,
+        Rows,
+        Columns
     }
 }
